@@ -60,6 +60,25 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'My Flutter App!',
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+        accentColor: Colors.amber,
+        fontFamily: 'Quicksand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+              title: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
+            ),
+        appBarTheme: AppBarTheme(
+            textTheme: ThemeData.light().textTheme.copyWith(
+                    title: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ))),
+      ),
       home: Scaffold(
         appBar: AppBar(
           actions: [
@@ -69,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () => _bringUpModal(context),
             )
           ],
-          title: Text('My Flutter App!'),
+          title: Text('~ Expenses ~'),
         ),
         body: SingleChildScrollView(
           child: Column(
