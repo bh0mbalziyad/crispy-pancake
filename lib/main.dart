@@ -22,18 +22,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
-    Transaction(
-        id: '1',
-        amount: 69.99,
-        dateTime: DateTime.now(),
-        title: 'MAH NEW SHOES'),
-    Transaction(
-        id: '2', amount: 399, dateTime: DateTime.now(), title: 'MAH NEW BED'),
-    Transaction(
-        id: '3',
-        amount: 1399,
-        dateTime: DateTime.now(),
-        title: 'MAH NEW GROCERIES'),
+    // Transaction(
+    //     id: '1',
+    //     amount: 69.99,
+    //     dateTime: DateTime.now(),
+    //     title: 'MAH NEW SHOES'),
+    // Transaction(
+    //     id: '2', amount: 399, dateTime: DateTime.now(), title: 'MAH NEW BED'),
+    // Transaction(
+    //     id: '3',
+    //     amount: 1399,
+    //     dateTime: DateTime.now(),
+    //     title: 'MAH NEW GROCERIES'),
   ];
 
   void _addNewTransaction(String title, double amount) {
@@ -66,14 +66,14 @@ class _MyHomePageState extends State<MyHomePage> {
         accentColor: Colors.amber,
         fontFamily: 'Quicksand',
         textTheme: ThemeData.light().textTheme.copyWith(
-              title: TextStyle(
+              headline6: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 18,
                   fontWeight: FontWeight.bold),
             ),
         appBarTheme: AppBarTheme(
             textTheme: ThemeData.light().textTheme.copyWith(
-                    title: TextStyle(
+                    headline6: TextStyle(
                   fontFamily: 'OpenSans',
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
