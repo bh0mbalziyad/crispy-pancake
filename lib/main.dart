@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './widgets/transaction_list.dart';
 import './widgets/new_transaction.dart';
+import './widgets/chart.dart';
 import './models/transaction.dart';
 
 void main() {
@@ -12,6 +13,28 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
         home: MyHomePage(),
+        theme: ThemeData(
+          primarySwatch: Colors.purple,
+          primaryColor: Colors.purple,
+          accentColor: Colors.amber,
+          fontFamily: 'Quicksand',
+          textTheme: ThemeData.light().textTheme.copyWith(
+                headline6: TextStyle(
+                    fontFamily: 'OpenSans',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+                button: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+          appBarTheme: AppBarTheme(
+              textTheme: ThemeData.light().textTheme.copyWith(
+                      headline6: TextStyle(
+                    fontFamily: 'OpenSans',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ))),
+        ),
       );
 }
 
@@ -36,15 +59,29 @@ class _MyHomePageState extends State<MyHomePage> {
     //     title: 'MAH NEW GROCERIES'),
   ];
 
-  void _addNewTransaction(String title, double amount) {
+  List<Transaction> get _recentTransactions {
+    return _userTransactions.where((element) {
+      return element.dateTime
+          .isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
+
+  void _addNewTransaction(
+      String title, double amount, DateTime transactionDate) {
     final newTx = Transaction(
       title: title,
       amount: amount,
-      dateTime: DateTime.now(),
+      dateTime: transactionDate,
       id: DateTime.now().toString(),
     );
     setState(() {
       _userTransactions.add(newTx);
+    });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((element) => element.id == id);
     });
   }
 
@@ -63,13 +100,18 @@ class _MyHomePageState extends State<MyHomePage> {
       title: 'My Flutter App!',
       theme: ThemeData(
         primarySwatch: Colors.purple,
+        primaryColor: Colors.purple,
         accentColor: Colors.amber,
+        // errorColor: Colors.red,
         fontFamily: 'Quicksand',
         textTheme: ThemeData.light().textTheme.copyWith(
               headline6: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 18,
                   fontWeight: FontWeight.bold),
+              button: TextStyle(
+                color: Colors.white,
+              ),
             ),
         appBarTheme: AppBarTheme(
             textTheme: ThemeData.light().textTheme.copyWith(
@@ -94,11 +136,8 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Card(
-                child: Text('Chart.'),
-                elevation: 5,
-              ),
-              TransactionList(_userTransactions),
+              Chart(_recentTransactions),
+              TransactionList(_userTransactions, _deleteTransaction),
             ],
           ),
         ),
