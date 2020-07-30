@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
 
 import './widgets/transaction_list.dart';
 import './widgets/new_transaction.dart';
@@ -6,6 +8,10 @@ import './widgets/chart.dart';
 import './models/transaction.dart';
 
 void main() {
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
   runApp(MyApp());
 }
 
@@ -59,6 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
     //     title: 'MAH NEW GROCERIES'),
   ];
 
+  bool _isChartShown = true;
+
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((element) {
       return element.dateTime
@@ -96,6 +104,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mQuery = MediaQuery.of(context);
+    final isLandscape = mQuery.orientation == Orientation.landscape;
+
+    final appBar = AppBar(
+      actions: [
+        IconButton(
+          tooltip: 'Add a transaction',
+          icon: Icon(Icons.add),
+          onPressed: () => _bringUpModal(context),
+        )
+      ],
+      title: Text('~ Expenses ~'),
+    );
+
+    final txListWidget = Container(
+      child: TransactionList(_userTransactions, _deleteTransaction),
+      height: (mQuery.size.height -
+              appBar.preferredSize.height -
+              mQuery.padding.top) *
+          0.70,
+    );
+
     return MaterialApp(
       title: 'My Flutter App!',
       theme: ThemeData(
@@ -122,31 +152,56 @@ class _MyHomePageState extends State<MyHomePage> {
                 ))),
       ),
       home: Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              tooltip: 'Add a transaction',
-              icon: Icon(Icons.add),
-              onPressed: () => _bringUpModal(context),
-            )
-          ],
-          title: Text('~ Expenses ~'),
-        ),
+        appBar: appBar,
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Chart(_recentTransactions),
-              TransactionList(_userTransactions, _deleteTransaction),
+              if (isLandscape)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Show chart'),
+                    Switch(
+                      value: _isChartShown,
+                      onChanged: (isTrue) {
+                        setState(() {
+                          _isChartShown = !_isChartShown;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              if (!isLandscape)
+                Container(
+                  height: (mQuery.size.height -
+                          appBar.preferredSize.height -
+                          mQuery.padding.top) *
+                      0.30,
+                  child: Chart(_recentTransactions),
+                ),
+              if (!isLandscape) txListWidget,
+              if (isLandscape)
+                _isChartShown
+                    ? Container(
+                        height: (mQuery.size.height -
+                                appBar.preferredSize.height -
+                                mQuery.padding.top) *
+                            0.70,
+                        child: Chart(_recentTransactions),
+                      )
+                    : txListWidget,
             ],
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: FloatingActionButton(
-          tooltip: 'Add a transaction',
-          child: Icon(Icons.add),
-          onPressed: () => _bringUpModal(context),
-        ),
+        floatingActionButton: Platform.isIOS
+            ? Container()
+            : FloatingActionButton(
+                tooltip: 'Add a transaction',
+                child: Icon(Icons.add),
+                onPressed: () => _bringUpModal(context),
+              ),
       ),
     );
   }
